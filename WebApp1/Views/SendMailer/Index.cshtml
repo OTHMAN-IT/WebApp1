@@ -1,0 +1,12 @@
+﻿@model WebApp1.Models.MailModel  
+@{  
+ViewBag.Title = "Index";  
+}  
+<h2>Index</h2>  
+<fieldset>  
+   <legend>  
+      Send Email  
+   </legend>  
+   <form method="post" asp-controller="SendMailer" asp-action="Create">
+       <button type="submit" value="Send"></button>
+   </form>
