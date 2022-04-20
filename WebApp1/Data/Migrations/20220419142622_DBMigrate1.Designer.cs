@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp1.Data;
 
@@ -11,9 +12,10 @@ using WebApp1.Data;
 namespace WebApp1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220419142622_DBMigrate1")]
+    partial class DBMigrate1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,6 +85,10 @@ namespace WebApp1.Data.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -100,17 +106,42 @@ namespace WebApp1.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Utilisateur", (string)null);
 
@@ -246,7 +277,7 @@ namespace WebApp1.Data.Migrations
 
                     b.HasKey("ImageID");
 
-                    b.ToTable("Image");
+                    b.ToTable("ImageUtilisateur");
                 });
 
             modelBuilder.Entity("WebApp1.Models.Profil", b =>
@@ -350,13 +381,16 @@ namespace WebApp1.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("EntiteID");
+                    b.Property<int?>("imageUtilisateurImageID")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ImageID");
+                    b.HasIndex("EntiteID");
 
                     b.HasIndex("ProfilID");
 
                     b.HasIndex("SiteID");
+
+                    b.HasIndex("imageUtilisateurImageID");
 
                     b.HasDiscriminator().HasValue("Utilisateur");
                 });
@@ -429,10 +463,6 @@ namespace WebApp1.Data.Migrations
                         .WithMany()
                         .HasForeignKey("EntiteID");
 
-                    b.HasOne("WebApp1.Models.ImageUtilisateur", "image")
-                        .WithMany()
-                        .HasForeignKey("ImageID");
-
                     b.HasOne("WebApp1.Models.Profil", "profil")
                         .WithMany()
                         .HasForeignKey("ProfilID");
@@ -441,9 +471,13 @@ namespace WebApp1.Data.Migrations
                         .WithMany()
                         .HasForeignKey("SiteID");
 
+                    b.HasOne("WebApp1.Models.ImageUtilisateur", "imageUtilisateur")
+                        .WithMany()
+                        .HasForeignKey("imageUtilisateurImageID");
+
                     b.Navigation("entite");
 
-                    b.Navigation("image");
+                    b.Navigation("imageUtilisateur");
 
                     b.Navigation("profil");
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApp1.Data;
 
@@ -11,9 +12,10 @@ using WebApp1.Data;
 namespace WebApp1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220419151054_DBMigrate2")]
+    partial class DBMigrate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,7 +248,7 @@ namespace WebApp1.Data.Migrations
 
                     b.HasKey("ImageID");
 
-                    b.ToTable("Image");
+                    b.ToTable("ImageUtilisateur");
                 });
 
             modelBuilder.Entity("WebApp1.Models.Profil", b =>
@@ -350,13 +352,16 @@ namespace WebApp1.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("EntiteID");
+                    b.Property<int?>("imageUtilisateurImageID")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ImageID");
+                    b.HasIndex("EntiteID");
 
                     b.HasIndex("ProfilID");
 
                     b.HasIndex("SiteID");
+
+                    b.HasIndex("imageUtilisateurImageID");
 
                     b.HasDiscriminator().HasValue("Utilisateur");
                 });
@@ -429,10 +434,6 @@ namespace WebApp1.Data.Migrations
                         .WithMany()
                         .HasForeignKey("EntiteID");
 
-                    b.HasOne("WebApp1.Models.ImageUtilisateur", "image")
-                        .WithMany()
-                        .HasForeignKey("ImageID");
-
                     b.HasOne("WebApp1.Models.Profil", "profil")
                         .WithMany()
                         .HasForeignKey("ProfilID");
@@ -441,9 +442,13 @@ namespace WebApp1.Data.Migrations
                         .WithMany()
                         .HasForeignKey("SiteID");
 
+                    b.HasOne("WebApp1.Models.ImageUtilisateur", "imageUtilisateur")
+                        .WithMany()
+                        .HasForeignKey("imageUtilisateurImageID");
+
                     b.Navigation("entite");
 
-                    b.Navigation("image");
+                    b.Navigation("imageUtilisateur");
 
                     b.Navigation("profil");
 
