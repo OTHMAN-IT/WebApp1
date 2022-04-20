@@ -12,8 +12,19 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(40);
+    options.Lockout.MaxFailedAccessAttempts = 3;
+})
     .AddEntityFrameworkStores<ApplicationDbContext>();
+    //.AddPasswordValidator<CustomPasswordValidator<IdentityUser>>();
+
+
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
+       o.TokenLifespan = TimeSpan.FromSeconds(30));
 builder.Services.AddControllersWithViews();
 
 //builder.Services.AddTransient<IEmailSender, EmailSender>();

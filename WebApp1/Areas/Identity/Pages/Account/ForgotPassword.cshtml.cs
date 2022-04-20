@@ -69,24 +69,30 @@ namespace WebApp1.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                MailMessage mail = new MailMessage();
-                mail.To.Add(user.Email);
-                mail.From = new MailAddress("elbiy95@gmail.com");
-                mail.Subject = "Confirm Password";
-                mail.Body = $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
-                mail.IsBodyHtml = true;
-                SmtpClient smtp = new SmtpClient();
-                smtp.Host = "smtp.gmail.com";
-                smtp.Port = 587;
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new System.Net.NetworkCredential("elbiy95@gmail.com", "OTHMANE20.");
-                smtp.EnableSsl = true;
-                smtp.Send(mail);
+                string body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.";
+                IEmaiSendSMTP(body, user.Email);
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
             return Page();
+        }
+
+        private async Task IEmaiSendSMTP(string body, string user)
+        {
+            MailMessage mail = new MailMessage();
+            mail.To.Add(user);
+            mail.From = new MailAddress("elbiy95@gmail.com");
+            mail.Subject = "Confirm Email";
+            mail.Body = body;
+            mail.IsBodyHtml = true;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com";
+            smtp.Port = 587;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new System.Net.NetworkCredential("elbiy95@gmail.com", "OTHMANE20.");
+            smtp.EnableSsl = true;
+            smtp.Send(mail);
         }
     }
 }
